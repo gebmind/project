@@ -57,26 +57,22 @@ if opcion == "Nuestros mapas de Informacion":
     lo que ves son mapas de Madrid, pero podemos generar mapas de cualquier ciudad o zona que necesites.
     """)
 
-    # Mostrar el mapa de barrios
-    st.subheader("Mapa de Barrios")
-    
     # Ruta al archivo HTML del mapa
+    imagenes_dir = os.path.join("assets", "images")
+    html_file = os.path.join(imagenes_dir)
 
-imagenes_dir = os.path.join("assets", "images")
-html_file = os.path.join(imagenes_dir)
-
-try:
+    try:
         with open(html_file, "r", encoding="utf-8") as f:
             html_content = f.read()
         st.components.v1.html(html_content, height=600, scrolling=True)
-except FileNotFoundError:
+    except FileNotFoundError:
         st.error(f"No se encontró el archivo HTML: {html_file}")
-except Exception as e:
+    except Exception as e:
         st.error(f"Error al leer el archivo HTML: {e}")
 
     # Mostrar otras imágenes (si las hay)
-imagenes_nombres = [f for f in os.listdir(imagenes_dir) if os.path.isfile(os.path.join(imagenes_dir, f)) and f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
-if imagenes_nombres:
+    imagenes_nombres = [f for f in os.listdir(imagenes_dir) if os.path.isfile(os.path.join(imagenes_dir, f)) and f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
+    if imagenes_nombres:
         st.subheader("Otras imágenes de locales")
         num_columnas = 3
         cols = st.columns(num_columnas)
@@ -88,7 +84,7 @@ if imagenes_nombres:
                 st.error(f"No se pudo encontrar la imagen: {nombre_imagen}")
             except Exception as e:
                 st.error(f"Error al cargar la imagen {nombre_imagen}: {e}")
-else:
+    else:
         st.info("No hay otras imágenes disponibles en la carpeta 'assets/images'.")
 
 # --- Página de Contacto ---
