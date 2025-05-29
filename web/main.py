@@ -48,44 +48,60 @@ if opcion == "Inicio":
 
     st.subheader("¡Empieza hoy mismo a encontrar tu local ideal!")
     
-# --- Página de Mapa de Locales ---
+# --- Página de Mapas de Información ---
 if opcion == "Nuestros mapas de Informacion":
     st.title("Mapa de Locales Disponibles")
 
     st.markdown("""
     Aquí puedes ver una serie de mapas generados con nuestra Inteligencia Artificial y nuestra base de datos como ejemplo.
-    lo que ves son mapas de Madrid, pero podemos generar mapas de cualquier ciudad o zona que necesites.
+    Lo que ves son mapas de Madrid, pero podemos generar mapas de cualquier ciudad o zona que necesites.
     """)
 
-    # Ruta al archivo HTML del mapa
-    imagenes_dir = os.path.join("assets", "images")
-    html_file = os.path.join(imagenes_dir)
+    # Definir ruta de los mapas
+    mapas_dir = os.path.join("assets", "maps")
 
-    try:
-        with open(html_file, "r", encoding="utf-8") as f:
-            html_content = f.read()
-        st.components.v1.html(html_content, height=600, scrolling=True)
-    except FileNotFoundError:
-        st.error(f"No se encontró el archivo HTML: {html_file}")
-    except Exception as e:
-        st.error(f"Error al leer el archivo HTML: {e}")
+    # Lista de archivos HTML de mapas
+    mapas_html = [
+        "mapa_barrios_restauracion.html",
+        "mapa_barrios.html",
+        "mapa_categorias.html",
+        "mapa_densidad.html",
+        "mapa_madrid_barrios_locales.html",
+        "mapa_ponderado.html",
+        "mapa_predicciones_modelo.html",
+        "mapa_valoracion_colormap.html",
+        "mapa_valoracion_puntos.html",
+    ]
 
-    # Mostrar otras imágenes (si las hay)
-    imagenes_nombres = [f for f in os.listdir(imagenes_dir) if os.path.isfile(os.path.join(imagenes_dir, f)) and f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
-    if imagenes_nombres:
-        st.subheader("Otras imágenes de locales")
-        num_columnas = 3
-        cols = st.columns(num_columnas)
-        for i, nombre_imagen in enumerate(imagenes_nombres):
-            ruta_imagen = os.path.join(imagenes_dir, nombre_imagen)
-            try:
-                st.image(ruta_imagen, caption=nombre_imagen, use_column_width=True)
-            except FileNotFoundError:
-                st.error(f"No se pudo encontrar la imagen: {nombre_imagen}")
-            except Exception as e:
-                st.error(f"Error al cargar la imagen {nombre_imagen}: {e}")
-    else:
-        st.info("No hay otras imágenes disponibles en la carpeta 'assets/images'.")
+    st.subheader("🗺️ Visualización individual de mapas")
+
+    for nombre_mapa in mapas_html:
+        html_path = os.path.join(mapas_dir, nombre_mapa)
+        st.markdown(f"**{nombre_mapa.replace('_', ' ').replace('.html', '').title()}**")
+        if os.path.exists(html_path):
+            with open(html_path, "r", encoding="utf-8") as f:
+                html_content = f.read()
+            st.components.v1.html(html_content, height=600, scrolling=True)
+        else:
+            st.warning(f"No se encontró el archivo: {nombre_mapa}")
+
+    st.subheader("🧩 Vista conjunta de mapas (2 columnas x 5 filas)")
+
+    # Mostrar los mapas en cuadrícula
+    num_columnas = 2
+    columnas = st.columns(num_columnas)
+
+    for i, nombre_mapa in enumerate(mapas_html):
+        col = columnas[i % num_columnas]
+        html_path = os.path.join(mapas_dir, nombre_mapa)
+        with col:
+            st.markdown(f"**{nombre_mapa.replace('_', ' ').replace('.html', '').title()}**")
+            if os.path.exists(html_path):
+                with open(html_path, "r", encoding="utf-8") as f:
+                    html_content = f.read()
+                st.components.v1.html(html_content, height=300, scrolling=False)
+            else:
+                st.warning(f"No se encontró el archivo: {nombre_mapa}")
 
 # --- Página de Contacto ---
 if opcion == "Contacto":
