@@ -49,7 +49,7 @@ if opcion == "Inicio":
     st.subheader("¡Empieza hoy mismo a encontrar tu local ideal!")
     
 # --- Página de Mapas de Información ---
-if opcion == "Nuestros mapas de Informacion":
+if opcion == "Mapa de Locales":
     st.title("Mapa de Locales Disponibles")
 
     st.markdown("""
@@ -64,28 +64,15 @@ if opcion == "Nuestros mapas de Informacion":
     mapas_html = [
         "mapa_barrios_restauracion.html",
         "mapa_barrios.html",
+        "mapa_madrid_barrios_locales.html",
         "mapa_categorias.html",
         "mapa_densidad.html",
-        "mapa_madrid_barrios_locales.html",
         "mapa_ponderado.html",
         "mapa_predicciones_modelo.html",
-        "mapa_valoracion_colormap.html",
         "mapa_valoracion_puntos.html",
     ]
 
-    st.subheader("🗺️ Visualización individual de mapas")
-
-    for nombre_mapa in mapas_html:
-        html_path = os.path.join(mapas_dir, nombre_mapa)
-        st.markdown(f"**{nombre_mapa.replace('_', ' ').replace('.html', '').title()}**")
-        if os.path.exists(html_path):
-            with open(html_path, "r", encoding="utf-8") as f:
-                html_content = f.read()
-            st.components.v1.html(html_content, height=600, scrolling=True)
-        else:
-            st.warning(f"No se encontró el archivo: {nombre_mapa}")
-
-    st.subheader("🧩 Vista conjunta de mapas (2 columnas x 5 filas)")
+    st.subheader("🧩 Vista conjunta de mapas")
 
     # Mostrar los mapas en cuadrícula
     num_columnas = 2
@@ -99,7 +86,7 @@ if opcion == "Nuestros mapas de Informacion":
             if os.path.exists(html_path):
                 with open(html_path, "r", encoding="utf-8") as f:
                     html_content = f.read()
-                st.components.v1.html(html_content, height=300, scrolling=False)
+                st.components.v1.html(html_content, height=450, scrolling=False)
             else:
                 st.warning(f"No se encontró el archivo: {nombre_mapa}")
 
