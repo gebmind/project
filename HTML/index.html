@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Final de Máster</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <img src="images/gebmind_logo.png" alt="Logo Proyecto" class="logo">
+        <nav>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#sobre">Sobre el Proyecto</a></li>
+                <li><a href="#datos">Datos y Procesamiento</a></li>
+                <li><a href="#modelado">Modelado</a></li>
+                <li><a href="#mapas">Mapas</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section id="inicio">
+        <h1>Bienvenidos a Nuestro Proyecto Final de Máster</h1>
+        <p>Descubre cómo analizamos los locales de Madrid para mejorar la inteligencia de negocio y apoyar la toma de decisiones estratégicas.</p>
+    </section>
+    <section id="sobre">
+        <h2>Sobre el Proyecto</h2>
+        <p>Este proyecto analiza y clasifica locales de Madrid utilizando técnicas de ciencia de datos, aprendizaje automático y visualización interactiva.</p>
+    </section>
+    <section id="datos">
+        <h2>Datos y Procesamiento</h2>
+        <ul>
+            <li><a href="data/locales.csv" download>Locales.csv</a></li>
+            <li><a href="data/locales_restauracion.csv" download>Locales Restauración.csv</a></li>
+            <li><a href="data/locales_procesado.csv" download>Locales Procesado.csv</a></li>
+        </ul>
+    </section>
+    <section id="modelado">
+        <h2>Modelado Predictivo</h2>
+        <img src="images/feature_importance.png" alt="Importancia de Variables">
+        <img src="images/roc_curve.png" alt="Curva ROC del Modelo">
+    </section>
+    <section id="mapas">
+        <h2>Mapas Interactivos</h2>
+        <label for="mapSelector">Elige el tipo de mapa:</label>
+        <select id="mapSelector">
+            <option value="mapa_barrios_restauracion.html">Barrios Restauración</option>
+            <option value="mapa_predicciones_modelo.html">Predicciones del Modelo</option>
+            <option value="mapa_valoracion_colormap.html">Valoración con Colormap</option>
+            <option value="mapa_valoracion_puntos.html">Valoración por Puntos</option>
+            <option value="mapa_densidad.html">Densidad de Locales</option>
+            <option value="mapa_barrios.html">Barrios de Madrid</option>
+        </select>
+        <iframe id="mapIframe" src="maps/mapa_barrios_restauracion.html" style="width: 100%; height: 600px; border: none;"></iframe>
+    </section>
+    <section id="contacto">
+        <h2>Contacto</h2>
+        <form>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="mensaje">Mensaje:</label>
+            <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+            <button type="submit">Enviar</button>
+        </form>
+    </section>
+    <footer>
+        <p>&copy; 2025 Proyecto Final de Máster - Todos los derechos reservados</p>
+    </footer>
+    <script src="js/maps.js"></script>
+</body>
+</html>
