@@ -12,7 +12,7 @@ Este proyecto tiene como objetivo principal analizar y clasificar locales de Mad
 ✅ Visualización interactiva de resultados y mapas.
 
 El resultado final se presenta como una **página web profesional** con:
-- Secciones de introducción y explicación del proyecto.
+- Navegación entre páginas dedicadas a cada sección del proyecto.
 - Descarga de datos CSV.
 - Visualizaciones de resultados y gráficas.
 - Mapas interactivos con Leaflet.js y Folium.
@@ -23,25 +23,35 @@ El resultado final se presenta como una **página web profesional** con:
 ## 📂 Estructura del proyecto
 
 ```
-mi_proyecto_web/
+mi_proyecto_web_v2/
 │
 ├── index.html
+├── sobre.html
+├── datos.html
+├── modelado.html
+├── mapas.html
+├── contacto.html
+│
 ├── css/
 │   └── styles.css
+│
 ├── js/
 │   └── maps.js
+│
 ├── images/
 │   └── gebmind_logo.png
+│
 ├── maps/
 │   ├── mapa_barrios_restauracion.html
 │   ├── mapa_predicciones_modelo.html
 │   ├── mapa_valoracion_colormap.html
 │   ├── ...
-├── data/
-│   ├── locales.csv
-│   ├── locales_restauracion.csv
-│   ├── locales_procesado.csv
-│   └── barrios.geojson (opcional)
+│
+└── data/
+    ├── locales.csv
+    ├── locales_restauracion.csv
+    ├── locales_procesado.csv
+    └── barrios.geojson (opcional)
 ```
 
 ---
@@ -97,7 +107,7 @@ ogr2ogr -f GeoJSON barrios.geojson BARRIOS.shp
 
 ## 📬 Contacto
 
-Puedes contactarnos a través del formulario de contacto en la página o enviando un correo electrónico a: [gebmind@gmail.com)](mailto:gebmind@gmail.com).
+Puedes contactarnos a través del formulario de contacto en la página o enviando un correo electrónico a: [gebmind@gmail.com](mailto:gebmind@gmail.com).
 
 ---
 
