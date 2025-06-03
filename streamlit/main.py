@@ -1,149 +1,182 @@
+# main.py
+
 import streamlit as st
 import os
 from PIL import Image
+import pandas as pd
 
-# Configuración general
-st.set_page_config(page_title="Gebmind", page_icon="🌐", layout="centered")
+# Configuración general de la página
+st.set_page_config(page_title="Gebmind", page_icon="🌐", layout="wide")
 
-# Sidebar con navegación manual
+# Definir rutas base de carpetas (según tu estructura real)
+ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
+DATA_DIR = os.path.join(ASSETS_DIR, "data")
+MAPS_DIR = os.path.join(ASSETS_DIR, "maps")
+IMAGES_DIR = os.path.join(ASSETS_DIR, "images")
+MODELS_DIR = os.path.join(ASSETS_DIR, "models")  # por si quieres usarlo más adelante
 
-st.sidebar.image("assets/logo.png", width=100)
+# Función para cargar imágenes de forma segura
+def load_image(image_name):
+    image_path = os.path.join(ASSETS_DIR, image_name)
+    if os.path.exists(image_path):
+        try:
+            return Image.open(image_path)
+        except Exception as e:
+            st.warning(f"⚠️ No se pudo abrir la imagen {image_name}: {e}")
+    else:
+        st.warning(f"⚠️ Imagen no encontrada: {image_name}")
+    return None
+
+# Sidebar con logo y navegación
+logo = load_image("gebmindlogo.png")
+if logo:
+    st.sidebar.image(logo, width=100)
+
 st.sidebar.title("Navegación")
-opcion = st.sidebar.radio("", ("Inicio", "Mapa de Locales", "Contacto", "Quiénes Somos"))
+opcion = st.sidebar.radio("", ("Inicio", "Resultados del Modelo", "Mapas de Locales", "Contacto", "Quiénes Somos"))
 
 # --- Página de Inicio ---
 if opcion == "Inicio":
-    st.title("Bienvenido a nuestra web, encuentra el local perfecto para Triunfar")
+    st.title("Bienvenido a Gebmind: Encuentra el Local Perfecto para tu Negocio")
 
-    col1, col2 = st.columns([1, 2])  # Divide en dos columnas con proporciones 1:2
-
-    image = Image.open("assets/logo.png")
-    st.image(image, width=200)
-    st.subheader("Gebmind te ayuda a crecer.")
+    col1, col2 = st.columns([1, 2])
+    if logo:
+        st.image(logo, width=200)
 
     with col1:
-        st.subheader("Nuestro producto")
+        st.subheader("🌟 Nuestro Producto")
         st.write("""
-        Ofrecemos soluciones innovadoras para facilitar la transformación digital de tu negocio.
-        Nos centramos en calidad, eficiencia y soporte personalizado.
-        Nuestra plataforma utiliza inteligencia artificial para analizar datos y ofrecerte las mejores opciones de locales comerciales.
+        Ofrecemos soluciones innovadoras para la transformación digital de tu negocio.
+        Nuestra plataforma usa Inteligencia Artificial para analizar datos y encontrar las mejores opciones de locales.
         """)
 
     with col2:
-        st.subheader("La clave para el éxito de tu negocio está en la ubicación ideal.")
+        st.subheader("🔍 ¿Por qué elegirnos?")
         st.write("""
-        En Gebmind, entendemos que elegir el local adecuado es el primer paso crucial para el éxito de tu empresa o negocio autónomo.
-        Te ofrecemos una búsqueda inteligente y personalizada, basada en análisis exhaustivos de datos demográficos, socioeconómicos y de la competencia.
-        """)
-        st.write("""
-        Nuestro objetivo es proporcionarte información valiosa para que tomes la decisión más informada y encuentres ese espacio único donde tu negocio pueda prosperar.
+        Elegir la ubicación adecuada es clave para el éxito de cualquier empresa.
+        En Gebmind analizamos datos demográficos, socioeconómicos y de competencia para ayudarte a tomar la mejor decisión.
         """)
 
-    st.subheader("¿Cómo te ayudamos?")
+    st.subheader("🚀 ¿Cómo te ayudamos?")
     st.markdown("""
-    - **Análisis Demográfico Avanzado:** Conoce la población, la distribución por edades y el nivel socioeconómico de las zonas de interés.
-    - **Evaluación de la Competencia:** Identifica negocios similares en la zona y analiza su presencia.
-    - **Información Detallada de Locales:** Accede a características, precios y fotografías de los locales disponibles.
+    - **Análisis Demográfico:** Datos de población y nivel socioeconómico.
+    - **Análisis de la Competencia:** Identifica negocios similares.
+    - **Información de Locales:** Características, precios y fotos.
     """)
 
-    st.subheader("¡Empieza hoy mismo a encontrar tu local ideal!")
-    
-# --- Página de Mapas de Información ---
-if opcion == "Mapa de Locales":
-    st.title("Mapa de Locales Disponibles")
+# --- Resultados del Modelo ---
+elif opcion == "Resultados del Modelo":
+    st.title("🔎 Resultados del Modelo Predictivo")
 
-    st.markdown("""
-    Aquí puedes ver una serie de mapas generados con nuestra Inteligencia Artificial y nuestra base de datos como ejemplo.
-    Lo que ves son mapas de Madrid, pero podemos generar mapas de cualquier ciudad o zona que necesites.
-    """)
+    report_path = os.path.join(DATA_DIR, "classification_report.csv")
+    if os.path.exists(report_path):
+        st.success("✅ Reporte de clasificación cargado correctamente.")
+        report_df = pd.read_csv(report_path)
+        st.dataframe(report_df)
+    else:
+        st.warning("⚠️ Reporte de clasificación no disponible.")
 
-    # Definir ruta de los mapas
-    mapas_dir = os.path.join("assets", "maps")
+    st.subheader("📊 Visualizaciones del Modelo")
 
-    # Lista de archivos HTML de mapas
-    mapas_html = [
-        "mapa_barrios_restauracion.html",
-        "mapa_barrios.html",
-        "mapa_madrid_barrios_locales.html",
-        "mapa_categorias.html",
-        "mapa_densidad.html",
-        "mapa_ponderado.html",
-        "mapa_predicciones_modelo.html",
-        "mapa_valoracion_puntos.html",
+    imagenes = [
+        ("feature_importance.png", "Importancia de Variables"),
+        ("roc_curve_multiclase.png", "Curva ROC Multiclase"),
+        ("roc_curve.png", "Curva ROC Clase Alta")
     ]
 
-    st.subheader("🧩 Vista conjunta de mapas")
+    cols = st.columns(len(imagenes))
+    for i, (img_name, caption) in enumerate(imagenes):
+        img_path = os.path.join(IMAGES_DIR, img_name)
+        if os.path.exists(img_path):
+            st.image(img_path, caption=caption, use_container_width=True)
+        else:
+            st.warning(f"⚠️ Imagen no encontrada: {img_name}")
 
-    # Mostrar los mapas en cuadrícula
-    num_columnas = 2
-    columnas = st.columns(num_columnas)
+# --- Página de Mapas de Locales ---
+elif opcion == "Mapas de Locales":
+    st.title("🗺️ Mapas Interactivos de Locales Disponibles")
 
-    for i, nombre_mapa in enumerate(mapas_html):
-        col = columnas[i % num_columnas]
-        html_path = os.path.join(mapas_dir, nombre_mapa)
-        with col:
-            st.markdown(f"**{nombre_mapa.replace('_', ' ').replace('.html', '').title()}**")
-            if os.path.exists(html_path):
-                with open(html_path, "r", encoding="utf-8") as f:
-                    html_content = f.read()
-                st.components.v1.html(html_content, height=450, scrolling=False)
-            else:
-                st.warning(f"No se encontró el archivo: {nombre_mapa}")
+    st.write("""
+    Descubre nuestros mapas generados con Inteligencia Artificial.
+    Explora información clave para tomar decisiones estratégicas.
+    """)
+
+    mapas_html = [
+        ("mapa_barrios_restauracion.html", "Mapa Barrios Restauración"),
+        ("mapa_barrios.html", "Mapa Barrios"),
+        ("mapa_madrid_barrios_locales.html", "Mapa Madrid Barrios Locales"),
+        ("mapa_categorias.html", "Mapa Categorías"),
+        ("mapa_densidad.html", "Mapa Densidad"),
+        ("mapa_ponderado.html", "Mapa Ponderado"),
+        ("mapa_predicciones_modelo.html", "Mapa Predicciones Modelo"),
+        ("mapa_valoracion_colormap.html", "Mapa Valoración Colormap"),
+        ("mapa_valoracion_puntos.html", "Mapa Valoración Puntos")
+    ]
+
+    for nombre_archivo, titulo in mapas_html:
+        st.subheader(f"🗂️ {titulo}")
+        html_path = os.path.join(MAPS_DIR, nombre_archivo)
+        if os.path.exists(html_path):
+            with open(html_path, "r", encoding="utf-8") as f:
+                html_content = f.read()
+            st.components.v1.html(html_content, height=500, scrolling=False)
+        else:
+            st.warning(f"⚠️ Mapa no encontrado: {nombre_archivo}")
 
 # --- Página de Contacto ---
-if opcion == "Contacto":
-    st.subheader("Formulario de Contacto")
-    st.markdown("¿Tienes alguna pregunta o necesitas ayuda personalizada?")
-    st.markdown("¡No dudes en contactarnos!")
+elif opcion == "Contacto":
+    st.subheader("📬 Formulario de Contacto")
+    st.markdown("¿Tienes preguntas o necesitas ayuda? ¡Contáctanos!")
 
     with st.form("formulario_contacto"):
         nombre = st.text_input("Nombre")
-        correo = st.text_input("Correo electrónico")
+        correo = st.text_input("Correo Electrónico")
         mensaje = st.text_area("Mensaje")
         enviado = st.form_submit_button("Enviar")
 
     if enviado:
         if nombre and correo and mensaje:
-            # Aquí puedes integrar SMTP o usar un servicio externo
-            st.success("Gracias por tu mensaje. Te responderemos pronto.")
+            st.success("¡Gracias por tu mensaje! Te responderemos pronto.")
         else:
-            st.warning("Por favor, rellena todos los campos.")
+            st.warning("⚠️ Por favor, completa todos los campos.")
 
 # --- Página de Quiénes Somos ---
 elif opcion == "Quiénes Somos":
-    st.subheader("Conoce a Gebmind")
+    st.subheader("👥 Conoce a Gebmind")
 
-    col_imagen, col_texto = st.columns([1, 2])
-
-    #with col_imagen:
-        #st.image("assets/equipo_gebmind.jpg", width=300) # Reemplaza con una imagen de tu equipo o empresa
+    col_texto, col_imagen = st.columns([2, 1])
 
     with col_texto:
         st.write("""
-        En Gebmind, somos un equipo **apasionado por la tecnología** y la **aplicación de la Inteligencia Artificial** para transformar y optimizar los sistemas empresariales actuales.
-        Creemos firmemente en el poder de la innovación para generar un **ahorro significativo** y una **mejora continua** en los procesos de nuestros clientes.
+        En Gebmind somos un equipo apasionado por la tecnología y la Inteligencia Artificial.
+        Queremos ayudarte a transformar tu negocio con análisis de datos y soporte personalizado.
         """)
+
+        st.markdown("""
+        **Nuestros valores:**
+        - 🔬 Innovación constante para resolver desafíos.
+        - 🤝 Compromiso con nuestros clientes.
+        - 🥇 Excelencia en soluciones y atención.
+        """)
+
+        st.subheader("📌 Información de Contacto")
         st.write("""
-        Nuestra misión es facilitar la **transformación digital** de negocios como el tuyo, ofreciendo soluciones **innovadoras**, **eficientes** y con un **soporte personalizado** que marca la diferencia.
+        - **Empresa**: GEBMIND S.L.
+        - **Descripción**: Proveedor de soluciones tecnológicas y consultoría.
+        - **Dirección**: Madrid, España.
+        - **Correo**: gebmind@gmail.com
+        - **Teléfono**: +34 616 391 289
         """)
 
-    st.subheader("Nuestros Valores")
-    col_valores1, col_valores2, col_valores3 = st.columns(3)
-    with col_valores1:
-        st.markdown("**Innovación**")
-        st.write("Buscamos constantemente nuevas formas de aplicar la tecnología para resolver desafíos empresariales.")
-    with col_valores2:
-        st.markdown("**Compromiso**")
-        st.write("Estamos dedicados al éxito de nuestros clientes y trabajamos codo a codo para alcanzar sus objetivos.")
-    with col_valores3:
-        st.markdown("**Excelencia**")
-        st.write("Nos esforzamos por ofrecer soluciones de la más alta calidad y un servicio impecable.")
+    with col_imagen:
+        equipo_path = os.path.join(ASSETS_DIR, "gebmindteam.png")
+        if os.path.exists(equipo_path):
+            st.image(equipo_path, caption="Equipo Gebmind", use_container_width=True)
+        else:
+            st.warning("No se encontró la imagen del equipo.")
 
-    st.subheader("Nuestro Equipo")
-    st.write("""
-    - **Empresa**:      GEBMIND S.L.
-    - **Descripción**:  Proveedor de soluciones tecnológicas y consultoría.
-    - **Dirección**:    Madrid, España
-    - **Correo**:       gebmind@gmail.com
-    - **Teléfono**:     +34 616 391 289
-    """)
+# --- Pie de Página ---
+st.markdown("""
+---
+🌐 Desarrollado por Gebmind © 2025  
+""")
