@@ -33,7 +33,7 @@ if logo:
     st.sidebar.image(logo, width=100)
 
 st.sidebar.title("Navegación")
-opcion = st.sidebar.radio("", ("Inicio", "Resultados del Modelo", "Mapas de Locales", "Contacto", "Quiénes Somos"))
+opcion = st.sidebar.radio("", ("Inicio", "Base de datos", "Nuestros mapas", "Resultados del Modelo", "Contacto", "Quiénes Somos"))
 
 # --- Página de Inicio ---
 if opcion == "Inicio":
@@ -64,10 +64,100 @@ if opcion == "Inicio":
     - **Información de Locales:** Características, precios y fotos.
     """)
 
+# --- Página de Base de datos ---
+elif opcion == "Base de datos":
+    st.title("Explora nuestra Base de Datos de Locales")
+
+    # Cargar la base de datos desde el CSV
+    csv_path = os.path.join(DATA_DIR, "locales.csv")
+    if os.path.exists(csv_path):
+        df = pd.read_csv(csv_path)
+
+        # Mostrar columnas para depuración si lo necesitas
+        # st.write("🧐 Columnas disponibles:", df.columns.tolist())
+
+        st.sidebar.subheader("Filtros de Búsqueda")
+
+        # Filtro por Código Postal (formato 5 dígitos)
+        codigo_postal = st.sidebar.text_input("Código Postal (formato 5 dígitos):", "")
+        if codigo_postal and not codigo_postal.isdigit():
+            st.sidebar.warning("⚠️ El Código Postal debe ser numérico.")
+        elif codigo_postal and len(codigo_postal) != 5:
+            st.sidebar.warning("⚠️ El Código Postal debe tener 5 dígitos.")
+
+        # Filtro por puntuación_media
+        min_puntuacion = float(df['puntuacion_media'].min())
+        max_puntuacion = float(df['puntuacion_media'].max())
+        puntuacion_range = st.sidebar.slider(
+            "Puntuación:",
+            min_value=min_puntuacion,
+            max_value=max_puntuacion,
+            value=(min_puntuacion, max_puntuacion)
+        )
+
+        # Filtro por numero_reviews
+        min_reviews = int(df['numero_reviews'].min())
+        max_reviews = int(df['numero_reviews'].max())
+        reviews_range = st.sidebar.slider(
+            "Número de reviews:",
+            min_value=min_reviews,
+            max_value=max_reviews,
+            value=(min_reviews, max_reviews)
+        )
+
+        # Filtrar DataFrame según criterios
+        filtered_df = df.copy()
+
+        if codigo_postal and codigo_postal.isdigit() and len(codigo_postal) == 5:
+            filtered_df = filtered_df[filtered_df['codigo_postal'] == int(codigo_postal)]
+
+        filtered_df = filtered_df[
+            (filtered_df['puntuacion_media'] >= puntuacion_range[0]) &
+            (filtered_df['puntuacion_media'] <= puntuacion_range[1]) &
+            (filtered_df['numero_reviews'] >= reviews_range[0]) &
+            (filtered_df['numero_reviews'] <= reviews_range[1])
+        ]
+
+        # Mostrar resultados
+        st.dataframe(filtered_df)
+
+    else:
+        st.warning("⚠️ No se encontró el archivo locales.csv en la carpeta de datos.")
+
+# --- Página de Nuestros mapas ---
+if opcion == "Nuestros mapas":
+    st.title("Nuestros Mapas de Locales Disponibles")
+
+    # Obtener lista de mapas disponibles (HTML o PNG en la carpeta de mapas)
+    mapas_disponibles = [f for f in os.listdir(MAPS_DIR) if f.endswith(('.html', '.png'))]
+
+    if mapas_disponibles:
+        # Selector lateral
+        mapa_seleccionado = st.sidebar.selectbox(
+            "Selecciona un mapa:", 
+            mapas_disponibles
+        )
+
+        # Construir la ruta completa
+        mapa_path = os.path.join(MAPS_DIR, mapa_seleccionado)
+
+        # Mostrar el mapa (según su extensión)
+        if mapa_seleccionado.endswith('.html'):
+            with open(mapa_path, 'r', encoding='utf-8') as f:
+                html_content = f.read()
+            st.components.v1.html(html_content, height=600, scrolling=True)
+        elif mapa_seleccionado.endswith('.png'):
+            st.image(mapa_path, caption=mapa_seleccionado, use_column_width=True)
+        else:
+            st.warning("Formato de archivo no soportado.")
+    else:
+        st.warning("No se encontraron mapas en la carpeta.")
+
 # --- Resultados del Modelo ---
 elif opcion == "Resultados del Modelo":
     st.title("🔎 Resultados del Modelo Predictivo")
 
+    # Mostrar reporte de clasificación (CSV)
     report_path = os.path.join(DATA_DIR, "classification_report.csv")
     if os.path.exists(report_path):
         st.success("✅ Reporte de clasificación cargado correctamente.")
@@ -78,50 +168,26 @@ elif opcion == "Resultados del Modelo":
 
     st.subheader("📊 Visualizaciones del Modelo")
 
-    imagenes = [
-        ("feature_importance.png", "Importancia de Variables"),
-        ("roc_curve_multiclase.png", "Curva ROC Multiclase"),
-        ("roc_curve.png", "Curva ROC Clase Alta")
+    # Lista de imágenes y captions
+    imagenes_resultados = [
+        ("curvas_roc.png", "Curvas ROC"),
+        ("distribucion_clases_original.png", "Distribución de Clases Original"),
+        ("distribucion_clases_smote.png", "Distribución de Clases Después de SMOTE"),
+        ("importancia_variables.png", "Importancia de Variables"),
+        ("matriz_confusion.png", "Matriz de Confusión")
     ]
 
-    cols = st.columns(len(imagenes))
-    for i, (img_name, caption) in enumerate(imagenes):
+    # Mostrar imágenes en columnas con tamaño adaptativo
+    cols = st.columns(len(imagenes_resultados))
+    for col, (img_name, caption) in zip(cols, imagenes_resultados):
         img_path = os.path.join(IMAGES_DIR, img_name)
         if os.path.exists(img_path):
-            st.image(img_path, caption=caption, use_container_width=True)
+            with open(img_path, "rb") as file:
+                img_bytes = file.read()
+            # Cargar imagen con resolución original y usar el nuevo parámetro
+            col.image(img_bytes, caption=caption, use_container_width=True)
         else:
-            st.warning(f"⚠️ Imagen no encontrada: {img_name}")
-
-# --- Página de Mapas de Locales ---
-elif opcion == "Mapas de Locales":
-    st.title("🗺️ Mapas Interactivos de Locales Disponibles")
-
-    st.write("""
-    Descubre nuestros mapas generados con Inteligencia Artificial.
-    Explora información clave para tomar decisiones estratégicas.
-    """)
-
-    mapas_html = [
-        ("mapa_barrios_restauracion.html", "Mapa Barrios Restauración"),
-        ("mapa_barrios.html", "Mapa Barrios"),
-        ("mapa_madrid_barrios_locales.html", "Mapa Madrid Barrios Locales"),
-        ("mapa_categorias.html", "Mapa Categorías"),
-        ("mapa_densidad.html", "Mapa Densidad"),
-        ("mapa_ponderado.html", "Mapa Ponderado"),
-        ("mapa_predicciones_modelo.html", "Mapa Predicciones Modelo"),
-        ("mapa_valoracion_colormap.html", "Mapa Valoración Colormap"),
-        ("mapa_valoracion_puntos.html", "Mapa Valoración Puntos")
-    ]
-
-    for nombre_archivo, titulo in mapas_html:
-        st.subheader(f"🗂️ {titulo}")
-        html_path = os.path.join(MAPS_DIR, nombre_archivo)
-        if os.path.exists(html_path):
-            with open(html_path, "r", encoding="utf-8") as f:
-                html_content = f.read()
-            st.components.v1.html(html_content, height=500, scrolling=False)
-        else:
-            st.warning(f"⚠️ Mapa no encontrado: {nombre_archivo}")
+            col.warning(f"⚠️ Imagen no encontrada: {img_name}")
 
 # --- Página de Contacto ---
 elif opcion == "Contacto":
@@ -167,6 +233,17 @@ elif opcion == "Quiénes Somos":
         - **Correo**: gebmind@gmail.com
         - **Teléfono**: +34 616 391 289
         """)
+
+        # --- Enlace a GitHub con su logo ---
+        github_logo_path = os.path.join(IMAGES_DIR, "github_logo.png")  # Ajusta la ruta si tu carpeta de imágenes es diferente
+        if os.path.exists(github_logo_path):
+            st.markdown(
+                f'<a href="https://github.com/gebmind" target="_blank">'
+                f'<img src="https://raw.githubusercontent.com/gebmind/gebmind_web/main/assets/images/github_logo.png" width="40" alt="GitHub Logo"></a>',
+                unsafe_allow_html=True
+            )
+        else:
+            st.warning("⚠️ Logo de GitHub no encontrado. Colócalo en assets/images/github_logo.png")
 
     with col_imagen:
         equipo_path = os.path.join(ASSETS_DIR, "gebmindteam.png")
