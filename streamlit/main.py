@@ -30,7 +30,7 @@ def load_image(image_name):
 # Sidebar con logo y navegación
 logo = load_image("gebmindlogo.png")
 if logo:
-    st.sidebar.image(logo, width=100)
+    st.sidebar.image(logo, width=300)
 
 st.sidebar.title("Navegación")
 opcion = st.sidebar.radio("", ("Inicio", "Base de datos", "Nuestros mapas", "Resultados del Modelo", "Contacto", "Quiénes Somos"))
@@ -69,14 +69,18 @@ elif opcion == "Base de datos":
     st.title("Explora nuestra Base de Datos de Locales")
 
     # Cargar la base de datos desde el CSV
-    csv_path = os.path.join(DATA_DIR, "locales.csv")
+    csv_path = os.path.join(DATA_DIR, "locales_procesado.csv")
     if os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
 
-        # Mostrar columnas para depuración si lo necesitas
-        # st.write("🧐 Columnas disponibles:", df.columns.tolist())
-
         st.sidebar.subheader("Filtros de Búsqueda")
+
+        # Filtro por Nombre (input de texto)
+        nombre_filtro = st.sidebar.text_input("Nombre del local (parcial):", "")
+
+        # Filtro por Categoría (desplegable)
+        categorias_disponibles = df["categoria_negocio"].dropna().unique()
+        categoria_filtro = st.sidebar.selectbox("Categoría del negocio:", ["Todas"] + list(categorias_disponibles))
 
         # Filtro por Código Postal (formato 5 dígitos)
         codigo_postal = st.sidebar.text_input("Código Postal (formato 5 dígitos):", "")
@@ -108,9 +112,19 @@ elif opcion == "Base de datos":
         # Filtrar DataFrame según criterios
         filtered_df = df.copy()
 
+        # Filtrar por Nombre
+        if nombre_filtro:
+            filtered_df = filtered_df[filtered_df['nombre'].str.contains(nombre_filtro, case=False, na=False)]
+
+        # Filtrar por Categoría
+        if categoria_filtro != "Todas":
+            filtered_df = filtered_df[filtered_df['categoria_negocio'] == categoria_filtro]
+
+        # Filtrar por Código Postal
         if codigo_postal and codigo_postal.isdigit() and len(codigo_postal) == 5:
             filtered_df = filtered_df[filtered_df['codigo_postal'] == int(codigo_postal)]
 
+        # Filtrar por puntuación_media y numero_reviews
         filtered_df = filtered_df[
             (filtered_df['puntuacion_media'] >= puntuacion_range[0]) &
             (filtered_df['puntuacion_media'] <= puntuacion_range[1]) &
@@ -118,11 +132,24 @@ elif opcion == "Base de datos":
             (filtered_df['numero_reviews'] <= reviews_range[1])
         ]
 
+        # Seleccionar solo las columnas a mostrar
+        columnas_mostrar = [
+            'nombre',
+            'direccion',
+            'codigo_postal',
+            'puntuacion_media',
+            'numero_reviews',
+            'tipo_negocio',
+            'categoria_negocio',
+            'valoracion'
+        ]
+        filtered_df = filtered_df[columnas_mostrar]
+
         # Mostrar resultados
         st.dataframe(filtered_df)
 
     else:
-        st.warning("⚠️ No se encontró el archivo locales.csv en la carpeta de datos.")
+        st.warning("⚠️ No se encontró el archivo locales_procesado.csv en la carpeta de datos.") 
 
 # --- Página de Nuestros mapas ---
 if opcion == "Nuestros mapas":
@@ -232,23 +259,13 @@ elif opcion == "Quiénes Somos":
         - **Dirección**: Madrid, España.
         - **Correo**: gebmind@gmail.com
         - **Teléfono**: +34 616 391 289
+        - **Redes Sociales**: [GitHub](https://github.com/gebmind) | [X](https://x.com/GebMind)
         """)
 
-        # --- Enlace a GitHub con su logo ---
-        github_logo_path = os.path.join(IMAGES_DIR, "github_logo.png")  # Ajusta la ruta si tu carpeta de imágenes es diferente
-        if os.path.exists(github_logo_path):
-            st.markdown(
-                f'<a href="https://github.com/gebmind" target="_blank">'
-                f'<img src="https://raw.githubusercontent.com/gebmind/gebmind_web/main/assets/images/github_logo.png" width="40" alt="GitHub Logo"></a>',
-                unsafe_allow_html=True
-            )
-        else:
-            st.warning("⚠️ Logo de GitHub no encontrado. Colócalo en assets/images/github_logo.png")
-
     with col_imagen:
-        equipo_path = os.path.join(ASSETS_DIR, "gebmindteam.png")
-        if os.path.exists(equipo_path):
-            st.image(equipo_path, caption="Equipo Gebmind", use_container_width=True)
+        equipo_image = load_image("gebmindteam.png")
+        if equipo_image:
+            st.image(equipo_image, width=800)
         else:
             st.warning("No se encontró la imagen del equipo.")
 
