@@ -42,28 +42,21 @@ opcion = st.sidebar.radio("", ("Inicio", "Recomendador IA", "Base de datos", "Nu
 
 # --- Página de Inicio ---
 if opcion == "Inicio":
-    st.title("Bienvenido a Gebmind: Encuentra el Local Perfecto para tu Negocio")
+    st.title("Bienvenido a Gebmind")
+    st.header("Encuentra el Local Perfecto para tu Negocio")   
 
-    col1, col2 = st.columns([1, 2])
-    if logo:
-        st.image(logo, width=200)
-
-    with col1:
-        st.subheader("🌟 Nuestro Producto")
-        st.write("""
-        Ofrecemos soluciones innovadoras para la transformación digital de tu negocio.
-        Nuestra plataforma usa Inteligencia Artificial para analizar datos y encontrar las mejores opciones de locales.
-        """)
-
-    with col2:
-        st.subheader("🔍 ¿Por qué elegirnos?")
-        st.write("""
-        Elegir la ubicación adecuada es clave para el éxito de cualquier empresa.
-        En Gebmind analizamos datos demográficos, socioeconómicos y de competencia para ayudarte a tomar la mejor decisión.
-        """)
-
-    st.subheader("🚀 ¿Cómo te ayudamos?")
-    st.markdown("""
+    st.subheader("▻ Nuestro Producto")
+    st.write("""
+    Ofrecemos soluciones innovadoras para la transformación digital de tu negocio.
+    Nuestra plataforma usa Inteligencia Artificial para analizar datos y encontrar las mejores opciones de locales.
+    """)    
+    st.subheader("▻ ¿Por qué elegirnos?")
+    st.write("""
+    Elegir la ubicación adecuada es clave para el éxito de cualquier empresa.
+    En Gebmind analizamos datos demográficos, socioeconómicos y de competencia para ayudarte a tomar la mejor decisión.
+    """)    
+    st.subheader("▻ ¿Cómo te ayudamos?")
+    st.write("""
     - **Análisis Demográfico:** Datos de población y nivel socioeconómico.
     - **Análisis de la Competencia:** Identifica negocios similares.
     - **Información de Locales:** Características, precios y fotos.
@@ -71,7 +64,7 @@ if opcion == "Inicio":
 
 # --- Página de Recomendador IA ---
 elif opcion == "Recomendador IA":
-    st.title("🔎 Recomendador IA para Nuevos Negocios")
+    st.title("Recomendador IA para nuevos negocios")
 
     # Cargar el dataset de referencia correcto
     df_reference_path = os.path.join(DATA_DIR, "locales_enriquecido_muestra.csv")
@@ -83,9 +76,9 @@ elif opcion == "Recomendador IA":
         model = pickle.load(file)
 
     # Formulario de entrada
-    nombre_cliente = st.text_input("👋 Ingresa tu nombre o el nombre de tu empresa (opcional)")
-    categoria_negocio = st.selectbox("🗂️ Seleccione la categoría de negocio:", df_reference['categoria_negocio'].unique())
-    codigo_postal = st.number_input("📍 Ingrese el código postal:", min_value=28000, max_value=28055, step=1)
+    nombre_cliente = st.text_input("Ingresa tu nombre o el nombre de tu empresa (opcional)")
+    categoria_negocio = st.selectbox("Seleccione la categoría de negocio:", df_reference['categoria_negocio'].unique())
+    codigo_postal = st.number_input("Ingrese el código postal:", min_value=28000, max_value=28055, step=1)
 
     if st.button("1️⃣ Generar recomendación"):
         # Filtrar datos de referencia por código postal
@@ -155,7 +148,7 @@ elif opcion == "Recomendador IA":
             # Crear el PDF
             c = canvas.Canvas(output_path, pagesize=letter)
             c.setFont("Helvetica-Bold", 16)
-            c.drawString(50, 750, "Informe de Recomendación GEBMIND")
+            c.drawString(50, 750, "Informe de recomendación GEBMIND")
             c.setFont("Helvetica", 12)
             c.drawString(50, 720, f"Código Postal: {st.session_state['codigo_postal']}")
             c.drawString(50, 700, f"Categoría de Negocio: {st.session_state['categoria_negocio']}")
@@ -170,7 +163,7 @@ elif opcion == "Recomendador IA":
                 pdf_bytes = f.read()
             st.success("✅ Informe generado correctamente. ¡Ahora puedes descargarlo!")
             st.download_button(
-                label="📥 Descargar Informe PDF",
+                label="Descargar Informe PDF",
                 data=pdf_bytes,
                 file_name=output_filename,
                 mime="application/pdf"
@@ -178,15 +171,15 @@ elif opcion == "Recomendador IA":
 
 # --- Página de Base de datos ---
 elif opcion == "Base de datos":
-    st.title("Explora nuestra Base de Datos de Locales")
+    st.title("Explora nuestras base de datos")
 
     # Listar los CSV disponibles en la carpeta data
     csv_files = [f for f in os.listdir(DATA_DIR) if f.endswith('.csv')]
     if not csv_files:
-        st.warning("⚠️ No hay archivos CSV disponibles en la carpeta de datos.")
+        st.warning("No hay archivos CSV disponibles en la carpeta de datos.")
     else:
         # Selector de archivo CSV en la barra lateral
-        selected_csv = st.sidebar.selectbox("📂 Selecciona el archivo CSV:", csv_files)
+        selected_csv = st.sidebar.selectbox("Selecciona el archivo CSV:", csv_files)
 
         # Cargar el archivo CSV seleccionado
         csv_path = os.path.join(DATA_DIR, selected_csv)
@@ -208,9 +201,9 @@ elif opcion == "Base de datos":
         if 'codigo_postal' in df.columns:
             codigo_postal = st.sidebar.text_input("Código Postal (formato 5 dígitos):", "")
             if codigo_postal and not codigo_postal.isdigit():
-                st.sidebar.warning("⚠️ El Código Postal debe ser numérico.")
+                st.sidebar.warning("El Código Postal debe ser numérico.")
             elif codigo_postal and len(codigo_postal) != 5:
-                st.sidebar.warning("⚠️ El Código Postal debe tener 5 dígitos.")
+                st.sidebar.warning("El Código Postal debe tener 5 dígitos.")
         else:
             codigo_postal = ""
 
@@ -312,18 +305,18 @@ if opcion == "Nuestros mapas":
 
 # --- Resultados del Modelo ---
 elif opcion == "Resultados del Modelo":
-    st.title("🔎 Resultados del Modelo Predictivo")
+    st.title("Resultados del Modelo Predictivo")
 
     # Mostrar reporte de clasificación (CSV)
     report_path = os.path.join(DATA_DIR, "classification_report.csv")
     if os.path.exists(report_path):
-        st.success("✅ Reporte de clasificación cargado correctamente.")
+        st.success("Reporte de clasificación cargado correctamente.")
         report_df = pd.read_csv(report_path)
         st.dataframe(report_df)
     else:
-        st.warning("⚠️ Reporte de clasificación no disponible.")
+        st.warning("Reporte de clasificación no disponible.")
 
-    st.subheader("📊 Visualizaciones del Modelo")
+    st.subheader("Visualizaciones del Modelo")
 
     # Lista de imágenes y captions
     imagenes_resultados = [
@@ -344,11 +337,11 @@ elif opcion == "Resultados del Modelo":
             # Cargar imagen con resolución original y usar el nuevo parámetro
             col.image(img_bytes, caption=caption, use_container_width=True)
         else:
-            col.warning(f"⚠️ Imagen no encontrada: {img_name}")
+            col.warning(f"Imagen no encontrada: {img_name}")
 
 # --- Página de Contacto ---
 elif opcion == "Contacto":
-    st.subheader("📬 Formulario de Contacto")
+    st.subheader("Formulario de Contacto")
     st.markdown("¿Tienes preguntas o necesitas ayuda? ¡Contáctanos!")
 
     with st.form("formulario_contacto"):
@@ -361,11 +354,11 @@ elif opcion == "Contacto":
         if nombre and correo and mensaje:
             st.success("¡Gracias por tu mensaje! Te responderemos pronto.")
         else:
-            st.warning("⚠️ Por favor, completa todos los campos.")
+            st.warning("Por favor, completa todos los campos.")
 
 # --- Página de Quiénes Somos ---
 elif opcion == "Quiénes Somos":
-    st.subheader("👥 Conoce a Gebmind")
+    st.subheader("Conoce a Gebmind")
 
     col_texto, col_imagen = st.columns([2, 1])
 
@@ -382,7 +375,7 @@ elif opcion == "Quiénes Somos":
         - 🥇 Excelencia en soluciones y atención.
         """)
 
-        st.subheader("📌 Información de Contacto")
+        st.subheader("Información de Contacto")
         st.write("""
         - **Empresa**: GEBMIND S.L.
         - **Descripción**: Proveedor de soluciones tecnológicas y consultoría.
@@ -402,5 +395,5 @@ elif opcion == "Quiénes Somos":
 # --- Pie de Página ---
 st.markdown("""
 ---
-🌐 Desarrollado por Gebmind © 2025  
+Desarrollado por Gebmind © 2025  
 """)

@@ -1,4 +1,4 @@
-# GEBMIND — Localización Inteligente para Negocios 🚀
+# GEBMIND — Localización Inteligente para Negocios
 
 Bienvenido a **GEBMIND**, una plataforma integral que te ayuda a encontrar el local perfecto para tu negocio utilizando Inteligencia Artificial y análisis de datos.
 
@@ -21,7 +21,7 @@ Incluye:
 
 ---
 
-## 🚀 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 GEBMIND/
@@ -55,7 +55,7 @@ GEBMIND/
 
 ---
 
-## 📂 Instrucciones de Uso
+## Instrucciones de Uso
 
 1. **Instalar dependencias** (preferiblemente en un entorno virtual):
 
@@ -85,17 +85,17 @@ http://localhost:8501/
 
 ---
 
-## 🛠️ Recomendaciones y Buenas Prácticas
+## Recomendaciones y Buenas Prácticas
 
-✅ **Carpetas organizadas** para evitar errores de rutas.  
-✅ **Modelos y reportes generados** se guardan en la carpeta `models/`.  
-✅ **Imágenes y mapas** organizados en `assets/images/` y `assets/maps/`.  
-✅ **Código limpio y comentado** en Notebooks y Streamlit para facilitar su mantenimiento.  
-✅ **Archivo .env o configuración de seguridad** (opcional) para manejar claves o accesos privados si es necesario.  
+**Carpetas organizadas** para evitar errores de rutas.  
+**Modelos y reportes generados** se guardan en la carpeta `models/`.  
+**Imágenes y mapas** organizados en `assets/images/` y `assets/maps/`.  
+**Código limpio y comentado** en Notebooks y Streamlit para facilitar su mantenimiento.  
+**Archivo .env o configuración de seguridad** (opcional) para manejar claves o accesos privados si es necesario.  
 
 ---
 
-## 📧 Contacto
+## Contacto
 
 ¿Tienes preguntas o sugerencias? ¡Contáctanos!  
 - ✉️ **Correo**: gebmind@gmail.com

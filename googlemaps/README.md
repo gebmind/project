@@ -1,9 +1,9 @@
 
-# GEBMIND Data Pipeline 🚀
+# GEBMIND Data Pipeline
 
 Este repositorio contiene el flujo completo de trabajo para la obtención, procesamiento, modelado y visualización de datos del sector HORECA en Madrid.
 
-## Estructura del Proyecto 📂
+## Estructura del Proyecto
 
 - **01_get_data.ipynb**: Obtención de datos generales (barrios, códigos postales y coordenadas).
 - **01_get_data_HORECA.ipynb**: Extracción de datos específicos de locales de restauración mediante la API de Google Places.
@@ -11,7 +11,7 @@ Este repositorio contiene el flujo completo de trabajo para la obtención, proce
 - **03_modelling.ipynb**: Entrenamiento de modelos predictivos para clasificación de negocios.
 - **04_maps.ipynb**: Visualización interactiva de resultados en mapas.
 
-## Instalación 🔧
+## Instalación
 
 1. Clona este repositorio:
    ```bash
@@ -23,7 +23,7 @@ Este repositorio contiene el flujo completo de trabajo para la obtención, proce
    pip install -r requirements.txt
    ```
 
-## Uso 🚀
+## Uso
 
 Ejecuta los notebooks en el siguiente orden:
 1. 01_get_data.ipynb
@@ -32,7 +32,7 @@ Ejecuta los notebooks en el siguiente orden:
 4. 03_modelling.ipynb
 5. 04_maps.ipynb
 
-## Tecnologías 🛠️
+## Tecnologías
 
 - Python 3.8+
 - Pandas, NumPy
@@ -40,14 +40,14 @@ Ejecuta los notebooks en el siguiente orden:
 - Folium, Geopandas
 - Matplotlib
 
-## Contribución 🤝
+## Contribución
 
 ¡Las contribuciones son bienvenidas! Abre un issue o envía un pull request.
 
-## Licencia 📄
+## Licencia
 
 Este proyecto está licenciado bajo la MIT License.
 
 ---
 
-*Desarrollado con ❤️ por GEBMIND.*
+*Desarrollado por GEBMIND.*
