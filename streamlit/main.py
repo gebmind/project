@@ -5,6 +5,13 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
+import folium
+import matplotlib.cm as mpl_cm
+import matplotlib.colors as mpl_colors
+
+from branca.element import Element
+from folium import plugins
+from folium.plugins import HeatMap, MiniMap, MarkerCluster
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from PIL import Image
@@ -124,6 +131,111 @@ elif opcion == "Recomendador IA":
             ax.set_title('Comparativa de Valoración')
             st.pyplot(fig)
             st.info(f"Nivel de competencia promedio en la zona: {competencia_count:.0f} locales similares con una media de {competencia_rating:.2f} estrellas.")
+
+            # ---------- Mapa 1: Cluster de marcadores ----------
+            locales_filtrados = df_reference[df_reference["codigo_postal"] == codigo_postal]
+
+            if not locales_filtrados.empty:
+                latitud_media = locales_filtrados["latitud"].mean()
+                longitud_media = locales_filtrados["longitud"].mean()
+            else:
+                latitud_media = 40.4168
+                longitud_media = -3.7038
+
+            m = folium.Map(
+                location=[latitud_media, longitud_media],
+                zoom_start=14,
+                tiles='https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png',
+                attr='Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+            )
+
+            marker_cluster = MarkerCluster().add_to(m)
+            for idx, row in locales_filtrados.iterrows():
+                if pd.notnull(row["latitud"]) and pd.notnull(row["longitud"]):
+                    folium.Marker(
+                        location=[row["latitud"], row["longitud"]],
+                        popup=row.get("nombre", "Sin nombre"),
+                        icon=folium.Icon(color="blue", icon="info-sign")
+                    ).add_to(marker_cluster)
+
+            # Guardar el mapa en la carpeta de informes
+            map1_filename = f"mapa_cluster_{codigo_postal}_{nombre_cliente}.html"
+            map1_path = os.path.join(INFORMES_DIR, map1_filename)
+            m.save(map1_path)
+            st.components.v1.html(open(map1_path, 'r', encoding='utf-8').read(), height=600)
+
+            # ---------- Mapa 2: Mapa de categorías ----------
+
+            df_categorias = locales_filtrados.dropna(subset=['categoria_negocio'])
+
+            if not df_categorias.empty:
+                categorias = sorted(df_categorias['categoria_negocio'].unique())
+                cmap = mpl_cm.get_cmap('tab20', len(categorias))
+                colors = [mpl_colors.to_hex(cmap(i)) for i in range(len(categorias))]
+                color_dict = dict(zip(categorias, colors))
+
+                def get_color_categoria(cat):
+                    return color_dict.get(cat, '#000000')  # negro por defecto
+
+                mapa_categorias = folium.Map(
+                    location=[latitud_media, longitud_media],
+                    zoom_start=14,
+                    tiles='https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png',
+                    attr='Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+                )
+
+                MiniMap().add_to(mapa_categorias)
+
+                for _, row in df_categorias.iterrows():
+                    color = get_color_categoria(row['categoria_negocio'])
+                    folium.CircleMarker(
+                        location=[row['latitud'], row['longitud']],
+                        radius=5,
+                        color=color,
+                        fill=True,
+                        fill_color=color,
+                        fill_opacity=0.6,
+                        popup=f"{row['nombre']}<br>{row['categoria_negocio']}"
+                    ).add_to(mapa_categorias)
+
+                categoria_info = (
+                    df_categorias.groupby('categoria_negocio')
+                    .agg(n_negocios=('nombre', 'count'))
+                    .to_dict(orient='index')
+                )
+
+                legend_html = f"""
+                <div style="
+                    position: fixed;
+                    bottom: 50px;
+                    left: 50px;
+                    width: 280px;
+                    background-color: white;
+                    border:2px solid grey;
+                    z-index:9999;
+                    font-size:13px;
+                    padding: 10px;
+                    overflow-y: auto;
+                    max-height: 300px;
+                ">
+                <b>Tipos de negocio (CP: {codigo_postal})</b><br>
+                {''.join([
+                    f"<div style='margin-top:4px;'><span style='background-color:{get_color_categoria(cat)};width:12px;height:12px;display:inline-block;margin-right:6px;'></span>{cat} ({categoria_info[cat]['n_negocios']})</div>"
+                    for cat in categorias
+                ])}
+                </div>
+                """
+                mapa_categorias.get_root().html.add_child(Element(legend_html))
+
+                map2_filename = f"mapa_categorias_{codigo_postal}_{nombre_cliente}.html"
+                map2_path = os.path.join(INFORMES_DIR, map2_filename)
+                mapa_categorias.save(map2_path)
+            else:
+                st.warning("No hay suficientes datos de categorías para generar el mapa de categorías.")
+
+            # Guardar el mapa en la carpeta de informes
+            st.components.v1.html(open(map2_path, 'r', encoding='utf-8').read(), height=600)
+
         else:
             st.warning("No hay datos suficientes para el código postal ingresado.")
 
@@ -133,19 +245,13 @@ elif opcion == "Recomendador IA":
             from datetime import datetime
             timestamp = datetime.now().strftime("%Y%m%d")
 
-            # Limpiar el nombre del cliente para el archivo
             nombre_cliente = st.session_state.get('nombre_cliente', '')
             nombre_cliente_limpio = nombre_cliente.strip().replace(" ", "_") if nombre_cliente else "SinNombre"
 
             output_filename = f"GEBMIND_CP{st.session_state['codigo_postal']}_{timestamp}_{nombre_cliente_limpio}.pdf"
-
-            # Crear la carpeta "informes" si no existe
             os.makedirs(INFORMES_DIR, exist_ok=True)
-            
-            # Construir la ruta completa del archivo
             output_path = os.path.join(INFORMES_DIR, output_filename)
 
-            # Crear el PDF
             c = canvas.Canvas(output_path, pagesize=letter)
             c.setFont("Helvetica-Bold", 16)
             c.drawString(50, 750, "Informe de recomendación GEBMIND")
@@ -157,8 +263,7 @@ elif opcion == "Recomendador IA":
             c.drawString(50, 640, f"Competencia promedio: {st.session_state['competencia_count']:.0f} locales similares")
             c.drawString(50, 620, f"Valoración media de competencia: {st.session_state['competencia_rating']:.2f} estrellas")
             c.save()
-            
-            # Leer el archivo para la descarga
+
             with open(output_path, "rb") as f:
                 pdf_bytes = f.read()
             st.success("✅ Informe generado correctamente. ¡Ahora puedes descargarlo!")
