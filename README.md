@@ -9,15 +9,15 @@ Bienvenido a **GEBMIND**, una plataforma integral que te ayuda a encontrar el lo
 
 ---
 
-## 📌 Descripción del Proyecto
+## Descripción del Proyecto
 
 El proyecto combina **modelos predictivos**, **análisis de datos** y **visualizaciones interactivas** para ofrecer un análisis completo de la mejor ubicación comercial.
 
 Incluye:
-- 📊 Modelado predictivo con Random Forest (SMOTE y otros métodos)
-- 📈 Gráficos y visualizaciones clave (Curva ROC, Importancia de Variables, etc.)
-- 🗺️ Mapas interactivos de análisis de barrios y locales
-- 💻 Interfaz web con **Streamlit** profesional y moderna
+- ⎆ Modelado predictivo con Random Forest (SMOTE y otros métodos)
+- ⎆ Gráficos y visualizaciones clave (Curva ROC, Importancia de Variables, etc.)
+- ⎆ Mapas interactivos de análisis de barrios y locales
+- ⎆ Interfaz web con **Streamlit** profesional y moderna
 
 ---
 
@@ -98,9 +98,9 @@ http://localhost:8501/
 ## Contacto
 
 ¿Tienes preguntas o sugerencias? ¡Contáctanos!  
-- ✉️ **Correo**: gebmind@gmail.com
-- 📍 **Ubicación**: Madrid, España
-- 📞 **Teléfono**: +34 616 391 289
+- **Correo**: gebmind@gmail.com
+- **Ubicación**: Madrid, España
+- **Teléfono**: +34 616 391 289
 
 ---
 
