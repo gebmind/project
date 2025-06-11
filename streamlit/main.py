@@ -307,24 +307,33 @@ if opcion == "Nuestros mapas":
 elif opcion == "Resultados del Modelo":
     st.title("Resultados del Modelo Predictivo")
 
-    # Mostrar reporte de clasificación (CSV)
-    report_path = os.path.join(DATA_DIR, "classification_report.csv")
-    if os.path.exists(report_path):
-        st.success("Reporte de clasificación cargado correctamente.")
-        report_df = pd.read_csv(report_path)
-        st.dataframe(report_df)
+    # Cargar métricas de regresión
+    metricas_path = os.path.join(DATA_DIR, "metricas_regresion.csv")
+    if os.path.exists(metricas_path):
+        st.success("✅ Métricas de desempeño cargadas correctamente.")
+        metricas_df = pd.read_csv(metricas_path)
+
+        # Mostrar tabla con tooltips (expander)
+        st.subheader("Métricas de Desempeño")
+
+        with st.expander("ℹ ¿Qué significan estas métricas?"):
+            st.markdown("""
+            - **RMSE**: Root Mean Square Error — mide la diferencia promedio entre los valores reales y predichos.
+            - **R²**: Coeficiente de Determinación — indica la proporción de la varianza explicada por el modelo (1 es perfecto).
+            - **MAE**: Mean Absolute Error — mide el error promedio absoluto entre los valores reales y predichos.
+            """)
+
+        st.table(metricas_df)
     else:
-        st.warning("Reporte de clasificación no disponible.")
+        st.warning("⚠️ No se encontró el archivo de métricas de regresión.")
 
     st.subheader("Visualizaciones del Modelo")
 
     # Lista de imágenes y captions
     imagenes_resultados = [
-        ("curvas_roc.png", "Curvas ROC"),
-        ("distribucion_clases_original.png", "Distribución de Clases Original"),
-        ("distribucion_clases_smote.png", "Distribución de Clases Después de SMOTE"),
         ("importancia_variables.png", "Importancia de Variables"),
-        ("matriz_confusion.png", "Matriz de Confusión")
+        ("real_vs_predicho.png", "Real vs Predicho"),
+        ("histograma_errores.png", "Histograma de Errores Absolutos")
     ]
 
     # Mostrar imágenes en columnas con tamaño adaptativo
@@ -334,10 +343,9 @@ elif opcion == "Resultados del Modelo":
         if os.path.exists(img_path):
             with open(img_path, "rb") as file:
                 img_bytes = file.read()
-            # Cargar imagen con resolución original y usar el nuevo parámetro
             col.image(img_bytes, caption=caption, use_container_width=True)
         else:
-            col.warning(f"Imagen no encontrada: {img_name}")
+            col.warning(f"⚠️ Imagen no encontrada: {img_name}")
 
 # --- Página de Contacto ---
 elif opcion == "Contacto":
