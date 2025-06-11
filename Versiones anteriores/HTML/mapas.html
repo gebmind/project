@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapas Interactivos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="js/maps.js"></script>
+</head>
+<body>
+    <header>
+    <img src="images/gebmind_logo.png" alt="Logo Proyecto" class="logo">
+    <nav>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="sobre.html">Sobre el Proyecto</a></li>
+            <li><a href="datos.html">Datos</a></li>
+            <li><a href="modelado.html">Modelado</a></li>
+            <li><a href="mapas.html">Mapas</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+    </nav>
+</header>
+    <section id="mapas">
+        <h2>Mapas Interactivos</h2>
+        <label for="mapSelector">Elige el tipo de mapa:</label>
+        <select id="mapSelector">
+            <option value="mapa_barrios_restauracion.html">Barrios Restauración</option>
+            <option value="mapa_predicciones_modelo.html">Predicciones del Modelo</option>
+            <option value="mapa_valoracion_colormap.html">Valoración con Colormap</option>
+            <option value="mapa_valoracion_puntos.html">Valoración por Puntos</option>
+            <option value="mapa_densidad.html">Densidad de Locales</option>
+            <option value="mapa_barrios.html">Barrios de Madrid</option>
+        </select>
+        <iframe id="mapIframe" src="maps/mapa_barrios_restauracion.html" style="width: 100%; height: 600px; border: none;"></iframe>
+    </section>
+</body>
+</html>
