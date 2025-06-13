@@ -8,6 +8,10 @@ import pickle
 import folium
 import matplotlib.cm as mpl_cm
 import matplotlib.colors as mpl_colors
+import matplotlib
+import branca
+import reportlab
+import Pillow
 
 from branca.element import Element
 from folium import plugins
