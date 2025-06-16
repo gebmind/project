@@ -128,7 +128,7 @@ elif opcion == "Recomendador IA":
 
             # Mostrar resultados
             st.success(f"La valoración esperada para un negocio de categoría '{categoria_negocio}' en el CP {codigo_postal} es: {valoracion_predicha:.2f}")
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(6, 4))
             bars = ax.bar(['Predicción', 'Media Zona'], [valoracion_predicha, valoracion_media_zona], color=['green', 'gray'])
             ax.set_ylabel('Valoración')
             ax.set_title('Comparativa de Valoración')
@@ -165,7 +165,7 @@ elif opcion == "Recomendador IA":
             map1_filename = f"mapa_cluster_{codigo_postal}_{nombre_cliente}.html"
             map1_path = os.path.join(INFORMES_DIR, map1_filename)
             m.save(map1_path)
-            st.components.v1.html(open(map1_path, 'r', encoding='utf-8').read(), height=600)
+            st.components.v1.html(open(map1_path, 'r', encoding='utf-8').read(), height=400)
 
             # ---------- Mapa 2: Mapa de categorías ----------
 
@@ -237,7 +237,7 @@ elif opcion == "Recomendador IA":
                 st.warning("No hay suficientes datos de categorías para generar el mapa de categorías.")
 
             # Guardar el mapa en la carpeta de informes
-            st.components.v1.html(open(map2_path, 'r', encoding='utf-8').read(), height=600)
+            st.components.v1.html(open(map2_path, 'r', encoding='utf-8').read(), height=400)
 
         else:
             st.warning("No hay datos suficientes para el código postal ingresado.")
